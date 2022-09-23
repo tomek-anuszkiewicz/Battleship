@@ -2,7 +2,7 @@
 
 public interface ICommandsFactory
 {
-    bool CanCreate(string str);
+    CommandValidationResult Validate(string str);
 
     ICommand Create(string str);
 }

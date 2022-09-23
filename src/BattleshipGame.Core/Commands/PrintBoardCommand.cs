@@ -17,7 +17,7 @@ public class PrintBoardCommand : ICommand
         _config = config;
     }
 
-    public bool CanApply(string str) => str == Name;
+    public CommandValidationResult Validate(string str) => CommandValidationResult.SuccessOrUnknown(str == Name);
 
     public void Apply(string str) { }
 

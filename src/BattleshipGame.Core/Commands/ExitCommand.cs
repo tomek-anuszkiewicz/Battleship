@@ -13,7 +13,7 @@ public class ExitCommand : ICommand
 
     public void Apply(string str) { }
 
-    public bool CanApply(string str) => str.Trim() == Name;
+    public CommandValidationResult Validate(string str) => CommandValidationResult.SuccessOrUnknown(str.Trim() == Name);
 
     public string Execute()
     {

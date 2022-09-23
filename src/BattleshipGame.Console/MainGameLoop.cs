@@ -80,9 +80,19 @@ internal class MainGameLoop : IMainGameLoop
             if (strPosition.Trim() == "")
                 continue;
 
-            if (!_commandsFactory.CanCreate(strPosition))
+            var validationResult = _commandsFactory.Validate(strPosition);
+            string error = "";
+
+            if (validationResult.Status == CommandValidationStatus.Unknown)
+                error = "Please enter valid command.";
+            if (validationResult.Status == CommandValidationStatus.KnownButError)
+                error = validationResult.Error;
+
+            if (error != "")
             {
-                _consoleWrapper.WriteLine("Please enter valid command.");
+                SetTextColor(GameColor.Error);
+                _consoleWrapper.WriteLine(error);
+                SetTextColor(GameColor.Text);
                 continue;
             }
 

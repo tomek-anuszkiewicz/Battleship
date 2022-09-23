@@ -14,12 +14,12 @@ public class HitCommand : ICommand
         _config = config;
     }
 
-    private (int X, int Y, bool Valid) Decode(string str)
+    private (int X, int Y, CommandValidationResult ValidationResult) Decode(string str)
     {
         Regex regex = new Regex("([a-z])([1-9][0-9]*)");
         var match = regex.Match(str);
         if (!match.Success)
-            return (0, 0, false);
+            return (0, 0, CommandValidationResult.Unknown);
         var letter = match.Groups[1].Value;
         var number = match.Groups[2].Value;
 
@@ -27,15 +27,15 @@ public class HitCommand : ICommand
         var y = int.Parse(number) - 1;
 
         if (x >= _config.BoardCellsSize.Width)
-            return (0, 0, false);
+            return (0, 0, CommandValidationResult.KnownButError("Error: Coordinates point outside board."));
 
         if (y >= _config.BoardCellsSize.Height)
-            return (0, 0, false);
+            return (0, 0, CommandValidationResult.KnownButError("Error: Coordinates point outside board."));
 
-        return (x, y, true);
+        return (x, y, CommandValidationResult.Success);
     }
 
-    public bool CanApply(string str) => Decode(str).Valid;
+    public CommandValidationResult Validate(string str) => Decode(str).ValidationResult;
 
     public void Apply(string str)
     {

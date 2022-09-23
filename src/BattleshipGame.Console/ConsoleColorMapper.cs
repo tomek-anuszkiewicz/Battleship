@@ -6,6 +6,7 @@ internal class ConsoleColorMapper : IConsoleColorMapper
         gameColor switch
         {
             GameColor.Text => ConsoleColor.White,
+            GameColor.Error => ConsoleColor.Red,
             GameColor.Background => ConsoleColor.Black,
             GameColor.Ship => ConsoleColor.White,
             GameColor.Water => ConsoleColor.Blue,

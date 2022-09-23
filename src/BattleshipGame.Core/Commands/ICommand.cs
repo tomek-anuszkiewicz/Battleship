@@ -2,7 +2,7 @@
 
 public interface ICommand
 {
-    bool CanApply(string str);
+    CommandValidationResult Validate(string str);
 
     void Apply(string str);
 

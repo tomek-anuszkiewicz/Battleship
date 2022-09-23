@@ -3,6 +3,7 @@
 public enum GameColor
 {
     Text,
+    Error,
     Background,
     Ship,
     Water,
