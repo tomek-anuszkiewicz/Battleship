@@ -12,23 +12,31 @@ internal class MainGameLoop : IMainGameLoop
 
     private readonly IExitRequested _exitRequested;
 
+    private readonly IConsoleColorMapper _consoleColorMapper;
+
     public MainGameLoop(
         IBoard board,
         IConsoleWrapper consoleWrapper,
         IConfig config,
         ICommandsFactory commandsFactory,
-        IExitRequested exitRequested)
+        IExitRequested exitRequested, 
+        IConsoleColorMapper consoleColorMapper)
     {
         _board = board;
         _consoleWrapper = consoleWrapper;
         _config = config;
         _commandsFactory = commandsFactory;
         _exitRequested = exitRequested;
+        _consoleColorMapper = consoleColorMapper;
     }
 
     public void RunInLoop()
     {
-        _consoleWrapper.ForegroundColor = ConsoleColor.Yellow;
+        SetBackgroundColor(GameColor.Background);
+        SetTextColor(GameColor.Text);
+
+        SetTextColor(GameColor.WaterLight);
+
         _consoleWrapper.WriteLine("");
         _consoleWrapper.WriteLine(@" ______         _    _    _             _      _        ");
         _consoleWrapper.WriteLine(@" | ___ \       | |  | |  | |           | |    (_)       ");
@@ -40,8 +48,10 @@ internal class MainGameLoop : IMainGameLoop
         _consoleWrapper.WriteLine(@"                                                 |_|    ");
         _consoleWrapper.WriteLine("");
         _consoleWrapper.WriteLine("Welcome in Battleship game");
-        _consoleWrapper.ForegroundColor = ConsoleColor.White;
         _consoleWrapper.WriteLine("");
+
+        SetTextColor(GameColor.Text);
+
         _consoleWrapper.WriteLine("This is simple version. Just discover all ships places by computer.");
         _consoleWrapper.WriteLine($"Board size: {_config.BoardCellsSize.Width}x{_config.BoardCellsSize.Height}");
         _consoleWrapper.WriteLine($"There are {_config.ShipLengthList.Count} ships on board.");
@@ -57,7 +67,14 @@ internal class MainGameLoop : IMainGameLoop
 
         while (true)
         {
-            _consoleWrapper.WriteLine("Issue command:");
+            SwapTextAndBackgroundColors();
+
+            _consoleWrapper.Write("Issue command:");
+
+            SwapTextAndBackgroundColors();
+
+            _consoleWrapper.WriteLine("");
+
             var strPosition = _consoleWrapper.ReadLine();
 
             if (strPosition.Trim() == "")
@@ -81,6 +98,16 @@ internal class MainGameLoop : IMainGameLoop
             if (_exitRequested.IsExitRequested)
                 break;
         }
+    }
+
+    private void SetTextColor(GameColor gameColor) => _consoleWrapper.ForegroundColor = _consoleColorMapper.MapColor(gameColor);
+
+    private void SetBackgroundColor(GameColor gameColor) => _consoleWrapper.BackgroundColor = _consoleColorMapper.MapColor(gameColor);
+
+    private void SwapTextAndBackgroundColors()
+    {
+        (_consoleWrapper.ForegroundColor, _consoleWrapper.BackgroundColor) = 
+            (_consoleWrapper.BackgroundColor, _consoleWrapper.ForegroundColor);
     }
 }
 

@@ -95,6 +95,7 @@ internal class ConsoleBoardDrawEngine : IBoardDrawEngine
 
     public void Print()
     {
+        var originalForegroundColor = _consoleWrapper.ForegroundColor;
         var originalBackgroundColor = _consoleWrapper.BackgroundColor;
 
         for (var y = 0; y < _height; y++)
@@ -129,6 +130,9 @@ internal class ConsoleBoardDrawEngine : IBoardDrawEngine
             _consoleWrapper.BackgroundColor = originalBackgroundColor;
             _consoleWrapper.WriteLine("");
         }
+
+        _consoleWrapper.ForegroundColor = originalForegroundColor;
+        _consoleWrapper.BackgroundColor = originalBackgroundColor;
     }
 
     public void DrawShipHit(ScreenPoint point) =>
