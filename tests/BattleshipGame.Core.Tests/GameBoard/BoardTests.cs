@@ -2,9 +2,9 @@
 
 public class BoardTests
 {
-    private Mock<IConfig> _configMock = new Mock<IConfig>(MockBehavior.Strict);
+    private readonly Mock<IConfig> _configMock = new (MockBehavior.Strict);
 
-    private Mock<IRandomWrapper> _randomWrapperMock = new Mock<IRandomWrapper>(MockBehavior.Strict);
+    private readonly Mock<IRandomWrapper> _randomWrapperMock = new (MockBehavior.Strict);
 
     private IBoard CreateSut() => new Board(_configMock.Object, _randomWrapperMock.Object);
 
