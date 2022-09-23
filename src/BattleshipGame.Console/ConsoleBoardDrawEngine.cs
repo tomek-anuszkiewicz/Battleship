@@ -95,6 +95,8 @@ internal class ConsoleBoardDrawEngine : IBoardDrawEngine
 
     public void Print()
     {
+        _consoleWrapper.WriteLine("");
+
         var originalForegroundColor = _consoleWrapper.ForegroundColor;
         var originalBackgroundColor = _consoleWrapper.BackgroundColor;
 
