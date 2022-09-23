@@ -1,0 +1,86 @@
+﻿namespace BattleshipGame.Console;
+
+internal class MainGameLoop : IMainGameLoop
+{
+    private readonly IBoard _board;
+
+    private readonly IConsoleWrapper _consoleWrapper;
+
+    private readonly IConfig _config;
+
+    private readonly ICommandsFactory _commandsFactory;
+
+    private readonly IExitRequested _exitRequested;
+
+    public MainGameLoop(
+        IBoard board,
+        IConsoleWrapper consoleWrapper,
+        IConfig config,
+        ICommandsFactory commandsFactory,
+        IExitRequested exitRequested)
+    {
+        _board = board;
+        _consoleWrapper = consoleWrapper;
+        _config = config;
+        _commandsFactory = commandsFactory;
+        _exitRequested = exitRequested;
+    }
+
+    public void RunInLoop()
+    {
+        _consoleWrapper.ForegroundColor = ConsoleColor.Yellow;
+        _consoleWrapper.WriteLine("");
+        _consoleWrapper.WriteLine(@" ______         _    _    _             _      _        ");
+        _consoleWrapper.WriteLine(@" | ___ \       | |  | |  | |           | |    (_)       ");
+        _consoleWrapper.WriteLine(@" | |_/ /  __ _ | |_ | |_ | |  ___  ___ | |__   _  _ __  ");
+        _consoleWrapper.WriteLine(@" | ___ \ / _` || __|| __|| | / _ \/ __|| '_ \ | || '_ \ ");
+        _consoleWrapper.WriteLine(@" | |_/ /| (_| || |_ | |_ | ||  __/\__ \| | | || || |_) |");
+        _consoleWrapper.WriteLine(@" \____/  \__,_| \__| \__||_| \___||___/|_| |_||_|| .__/ ");
+        _consoleWrapper.WriteLine(@"                                                 | |    ");
+        _consoleWrapper.WriteLine(@"                                                 |_|    ");
+        _consoleWrapper.WriteLine("");
+        _consoleWrapper.WriteLine("Welcome in Battleship game");
+        _consoleWrapper.ForegroundColor = ConsoleColor.White;
+        _consoleWrapper.WriteLine("");
+        _consoleWrapper.WriteLine("This is simple version. Just discover all ships places by computer.");
+        _consoleWrapper.WriteLine($"Board size: {_config.BoardCellsSize.Width}x{_config.BoardCellsSize.Height}");
+        _consoleWrapper.WriteLine($"There are {_config.ShipLengthList.Count} ships on board.");
+        _consoleWrapper.WriteLine($"Their lengths: {string.Join(", ", _config.ShipLengthList)}");
+        _consoleWrapper.WriteLine("You need enter coordinates like A5, C6.");
+        _consoleWrapper.WriteLine($"Type {ExitCommand.Name} to exit.");
+        _consoleWrapper.WriteLine($"Type {PrintBoardCommand.Name} to print board. Just for debug purpose.");
+
+        _board.ArrangeShipsOnComputerBoard(_config.ShipLengthList);
+        _consoleWrapper.WriteLine("");
+        _consoleWrapper.WriteLine("All ships has been placed, let's play!");
+        _consoleWrapper.WriteLine("");
+
+        while (true)
+        {
+            _consoleWrapper.WriteLine("Issue command:");
+            var strPosition = _consoleWrapper.ReadLine();
+
+            if (strPosition.Trim() == "")
+                continue;
+
+            if (!_commandsFactory.CanCreate(strPosition))
+            {
+                _consoleWrapper.WriteLine("Please enter valid command.");
+                continue;
+            }
+
+            var command = _commandsFactory.Create(strPosition);
+
+            var result = command.Execute();
+
+            if (result != null)
+                _consoleWrapper.WriteLine(result);
+
+            if (_board.IsAllSunk())
+                break;
+            if (_exitRequested.IsExitRequested)
+                break;
+        }
+    }
+}
+
