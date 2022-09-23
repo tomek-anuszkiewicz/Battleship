@@ -13,7 +13,8 @@ internal class CommandsFactory : ICommandsFactory
 
     public ICommand Create(string str)
     {
-        var command = _commands.Single(el => el.CanApply(str.ToLower().Trim()));
+        str = str.ToLower().Trim();
+        var command = _commands.Single(el => el.CanApply(str));
         command.Apply(str);
         return command;
     }
