@@ -2,7 +2,7 @@
 
 internal class Board : IBoard
 {
-    private readonly BoardCells _cells;
+    protected readonly CellStatus[,] _cells;
 
     private readonly List<ShipOnBoard> _shipOnBoardList = new();
 
@@ -24,13 +24,13 @@ internal class Board : IBoard
         _randomWrapper = randomWrapper;
         Width = _config.BoardCellsSize.Width;
         Height = _config.BoardCellsSize.Height;
-        _cells = new BoardCells(Width, Height);
+        _cells = new CellStatus[Width, Height];
     }
 
     public CellStatus this[BoardPosition position]
     {
-        get => _cells[position];
-        private set => _cells[position] = value;
+        get => _cells[position.X, position.Y];
+        private set => _cells[position.X, position.Y] = value;
     }
 
     public CellStatus this[int x, int y]
@@ -105,7 +105,7 @@ internal class Board : IBoard
     public void Clear()
     {
         _shipOnBoardList.Clear();
-        _cells.Clear();
+        Array.Clear(_cells);
     }
 
     public void ArrangeShipsOnComputerBoard(IReadOnlyList<int> shipLengthList)
